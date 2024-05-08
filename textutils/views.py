@@ -47,25 +47,25 @@ def analyze(request):
         params = {'purpose': 'Count Characters', 'analyzed_text': f'Total characters: {char_count}'}
         return render(request, 'analyze.html', params)
 
-    elif( newlinerem == 'on'):
-        analyzed =""
+    elif newlinerem == 'on':
+        analyzed = ""
         for char in djtext:
-            if char != "\n" and char != "\r" :
-                analyzed = analyzed + char
-            analyzed += char.lower()
-        params = {'purpose': 'change to uppercase', 'analyzed_text': analyzed}
+            if char not in {"\n", "\r"}:  # Check against a set of newlines
+                analyzed += char
+        params = {'purpose': 'Remove Newlines', 'analyzed_text': analyzed}
         return render(request, 'analyze.html', params)
     
-    elif( extraspacereomver == 'on'):
-        analyzed =""
-        for index, char in enumerate(djtext):
-            if djtext[index] == " " and djtext[index+1]== " " :
-                pass
-            else: 
-                analyzed = analyzed + char
-                
-        params = {'purpose': 'change to uppercase', 'analyzed_text': analyzed}
-        return render(request, 'analyze.html', params)
+    elif extraspacereomver == 'on':
+            analyzed = ""
+            for index, char in enumerate(djtext):
+                # Check if the current character is a space and the next character exists
+                if index < len(djtext) - 1 and djtext[index] == " " and djtext[index + 1] == " ":
+                    pass  # Skip double spaces
+                else:
+                    analyzed += char
+            params = {'purpose': 'Remove Extra Spaces', 'analyzed_text': analyzed}
+            return render(request, 'analyze.html', params)
+
     else:
         # If 'removepunc' is off, just pass the original text back
         params = {'purpose': 'No operation performed', 'analyzed_text': djtext}
